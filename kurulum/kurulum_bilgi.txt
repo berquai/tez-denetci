@@ -1,0 +1,22 @@
+﻿Tez Denetçi
+
+Tezin dipnotlarını, kaynakçasını ve kaynak dosyalarını tutarlılık ve biçim açısından denetleyen bir masaüstü programıdır.
+Berkay Çelik tarafından akademik çalışmalara yardımcı olmak amacıyla tasarlanmıştır.
+
+Bilmeniz gerekenler
+
+• Program belgelerinizi yalnızca okur; hiçbir dosyayı değiştirmez ve internete bağlanmaz.
+• Kurulum yönetici izni gerektirmez; program kullanıcı klasörünüze kurulur.
+• Kullanım kılavuzu: program içinde F1 ya da Başlat menüsünde “Kullanım Kılavuzu”.
+
+Lisans
+
+Tez Denetçi özgür bir yazılımdır. Copyright (C) 2026 Berkay Çelik <berkcel@gmail.com>.
+GNU Affero Genel Kamu Lisansı sürüm 3 veya sonraki sürümleri (AGPL-3.0-or-later) ve NOTICE dosyasındaki ek koşullar
+kapsamında dağıtılır. Program HİÇBİR GARANTİ OLMAKSIZIN sunulur.
+
+Programı başkalarına verdiğinizde kaynak kodunu da vermelisiniz; kaynak kodu kurulum klasöründeki kaynak_kod.zip
+dosyasında hazır bulunur. Yazar atfı ve telif bildirimleri kaldırılamaz; değiştirilmiş sürümler, değiştirildiklerini
+ve kimin tarafından değiştirildiğini açıkça belirtmelidir.
+
+Bir sonraki sayfada lisansın tam metni (İngilizce) yer almaktadır.

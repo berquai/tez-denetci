@@ -1,0 +1,22 @@
+ÜÇÜNCÜ TARAF BİLEŞENLER
+
+Tez Denetçi aşağıdaki açık kaynak bileşenleri kullanır. Her bileşen kendi
+lisansı kapsamındadır; bu bileşenlerin telif hakları sahiplerine aittir.
+
+Qt for Python (PySide6) ve Qt kütüphaneleri
+  The Qt Company Ltd. — GNU Lesser General Public License v3 (LGPL-3.0)
+  https://www.qt.io/qt-for-python
+  Qt kütüphaneleri programa dinamik olarak bağlanmıştır; kullanıcı bunları
+  aynı arayüzle uyumlu başka bir sürümle değiştirebilir. LGPL-3.0 ve onun
+  dayandığı GPL-3.0 metinleri programla birlikte verilmiştir.
+
+openpyxl — MIT Lisansı — https://openpyxl.readthedocs.io
+lxml — BSD 3-Clause Lisansı — https://lxml.de
+python-docx — MIT Lisansı — https://github.com/python-openxml/python-docx
+RapidFuzz — MIT Lisansı — https://github.com/rapidfuzz/RapidFuzz
+pywin32 (yalnızca Windows; Word bağlantısı) — Python Software Foundation Lisansı
+  https://github.com/mhammond/pywin32
+Python — Python Software Foundation Lisansı — https://www.python.org
+
+Exe paketi PyInstaller ile oluşturulur (GPL-2.0, önyükleyici için özel istisna
+ile; oluşturulan programın lisansını etkilemez).

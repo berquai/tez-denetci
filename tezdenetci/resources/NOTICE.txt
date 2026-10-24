@@ -1,0 +1,36 @@
+Tez Denetçi
+Copyright (C) 2026 Berkay Çelik <berkcel@gmail.com>
+
+Tez Denetçi, Berkay Çelik tarafından akademik çalışmalarda dipnot, kaynakça
+ve biçim tutarlılığını denetlemek amacıyla tasarlanmış ve geliştirilmiştir.
+
+Bu program özgür yazılımdır: Free Software Foundation tarafından yayımlanan
+GNU Affero Genel Kamu Lisansı'nın 3. sürümü ya da (tercihinize bağlı olarak)
+daha sonraki herhangi bir sürümü kapsamında ve aşağıdaki ek koşullarla
+yeniden dağıtabilir ve/veya değiştirebilirsiniz.
+
+Bu program yararlı olması umuduyla dağıtılmaktadır; ancak HİÇBİR GARANTİSİ
+YOKTUR; SATILABİLİRLİK ya da BELİRLİ BİR AMACA UYGUNLUK zımni garantisi
+dahi yoktur. Ayrıntılar için GNU Affero Genel Kamu Lisansı'na bakınız.
+Lisansın bir kopyası programla birlikte (AGPL-3.0.txt) verilmiştir;
+ayrıca <https://www.gnu.org/licenses/> adresinde bulunabilir.
+
+AGPL-3.0 BÖLÜM 7 UYARINCA EK KOŞULLAR
+
+(b) Yazar atfı: Programın ve programdan türetilen her çalışmanın kopyalarında,
+    "Tez Denetçi — Berkay Çelik tarafından tasarlanmış ve geliştirilmiştir"
+    atfı ile yukarıdaki telif bildirimi korunmalı; etkileşimli kullanıcı
+    arayüzü bulunan sürümlerde bu atıf "Hakkında" penceresinde ya da
+    eşdeğer bir yerde görünür biçimde sunulmalıdır.
+
+(c) Değiştirilmiş sürümler: Değiştirilmiş sürümler, özgün sürümden farklı
+    olduklarını ve kimin tarafından, hangi tarihte değiştirildiklerini açıkça
+    belirtmelidir; bu sürümler özgün sürümmüş gibi sunulamaz.
+
+(d) Ad kullanımı: Berkay Çelik'in adı, yazılı izni olmaksızın değiştirilmiş
+    sürümlerin ya da türetilmiş çalışmaların tanıtımında, onay ya da destek
+    izlenimi verecek biçimde kullanılamaz.
+
+Lisansın tanımadığı tüm haklar saklıdır.
+
+Kaynak kodu: https://github.com/berquai/tez-denetci

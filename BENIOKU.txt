@@ -1,0 +1,81 @@
+TEZ DENETÇİ 1.3 — Kurulum ve kullanım
+=====================================
+Berkay Çelik tarafından akademik çalışmalara yardımcı olmak amacıyla tasarlanmıştır.
+
+KURULUM (bir kez)
+1. Bu klasörü bilgisayarınızda kalıcı bir yere çıkarın (ör. Belgeler\TezDenetci).
+2. kurulum.bat dosyasına çift tıklayın. Python 3.10 veya üstü gerekir
+   (yoksa python.org'dan kurun, kurulumda "Add python.exe to PATH" kutusunu işaretleyin).
+   İnternetten yaklaşık 250 MB kütüphane iner; birkaç dakika sürer.
+   Önceki sürümü kurduysanız da kurulum.bat'ı bir kez daha çalıştırın (Word bağlantısı için
+   yeni bir kütüphane eklendi).
+
+ÇALIŞTIRMA
+- baslat.bat dosyasına çift tıklayın.
+- Ayrıntılı kılavuz: program içinde F1 ya da bu klasördeki Kullanim_Kilavuzu.html.
+
+PAKETLEME (taşınabilir sürüm ve kurulum paketi)
+- paketle.bat → “cikti” klasöründe:
+    TezDenetci_<sürüm>_Tasinabilir.zip  kurulum gerektirmez, USB’de de çalışır; ayarlar programın yanında
+    TezDenetci_<sürüm>_Kurulum.exe      Başlat menüsü ve masaüstü kısayollu kurulum (yönetici izni istemez)
+    kaynak_kod.zip                       programla birlikte verilecek kaynak kod (AGPL)
+- Kurulum paketinin üretilmesi için Inno Setup 6 kurulu olmalı (ücretsiz: https://jrsoftware.org/isdl.php).
+  Kurulu değilse yalnızca taşınabilir sürüm üretilir.
+- İsterseniz hiçbir şey kurmadan GitHub üretir: proje GitHub’a yüklendiğinde Actions › Derle › Run workflow;
+  çıktılar işin “Artifacts” bölümünden indirilir (.github/workflows/derle.yml).
+- Kurulumu denetlemek için: TezDenetci.exe --selftest (taşınabilir sürümde sonuç selftest.txt’ye yazılır).
+
+İLK AÇILIŞTA
+1. Araç çubuğundan: Tez (.docx) → Bilgiler Listesi (.xlsx) → Kaynak klasörü (Tüm Kaynaklar).
+   Seçimler hatırlanır; sonraki açılışlarda kendiliğinden taranır.
+2. "Otomatik izle" açıkken Word'de ya da Excel'de her Ctrl+S'den birkaç saniye sonra
+   yeniden tarar ve durum çubuğunda "x yeni, y giderilmiş bulgu" der.
+
+KULLANIM
+- Soldaki listeden bir bulgu seçin: ortada tezdeki hâli (hata vurgulu), olması gereken hâli,
+  bulgular ve dipnotun metindeki bağlamı; sağda kaynak dosya, atıf yapılan sayfada açılır.
+- Doğrusunu kopyala (Ctrl+Shift+C) → Word'de Ctrl+V. Yazı tipi ve punto tezin kendi
+  dipnot/kaynakça/gövde biçeminden alınır, italikler korunur.
+- Kaynak panelinde "Basılı s." dipnottaki sayfadır. PDF sayfası = basılı sayfa − kayma.
+  Kayma çoğunlukla otomatik bulunur; taranmış PDF'lerde doğru sayfayı bulup "Kayma"yı
+  düzeltin, o kaynak için kalıcı olarak hatırlanır.
+- Paneller sürüklenebilir; başlığına çift tıklayınca ayrı pencere olur (ikinci ekranda PDF).
+- Word’de göster (Ctrl+Shift+W): açık Word belgesinde seçili dipnotun metindeki numarasına
+  (ya da bulgulu paragrafa) gider ve kaçıncı sayfada olduğunu söyler. “Dipnot metnine git”
+  sayfa altındaki dipnot metnini seçer. Word kapalıysa belgeyi kendisi açar.
+- Dipnot Atlası (F9): hatalı ya da hatasız BÜTÜN dipnotların listesi; tıklayınca kaynak atıf yapılan
+  sayfada açılır. Örneğin tez savunmasında jüri bir dipnotu sorduğunda Ctrl+G ile numarasına gidilir.
+  Bulgular görünümüne F8 ile dönülür.
+- Kaynak panelinde “PDF s.” PDF’in kendi sayfasıdır; yanında basılı karşılığı yazar.
+  Kayma yanlışsa doğru sayfaya gelin, basılı numarayı “Basılı s.”ye yazıp
+  “Kaymayı buradan hesapla”ya basın.
+- Görünüm › Tema (Ctrl+T): Kâğıt, Sepya, Bulut, Gece, Gece Mavisi, Orman, Yüksek Kontrast, Özel.
+- Dosya > Dışa aktar: HTML rapor, Excel (Word'den üretilmiş dipnot listesi + Kaynak Kütüğü),
+  Word (yeni kaynakça, tezin "a_kaynakça" biçemiyle).
+
+İNCELEME VE İKİ BİLGİSAYARDA ÇALIŞMA
+- Bir bulguya baktıktan sonra Ctrl+D (ya da “✓ İncelendi”): işaretlenir, listeden gizlenir ve
+  sıradakine geçilir. Tekrar basınca işaret kalkar. Gizlenenleri görmek için “İncelenenler” kutusu.
+- İşaretler dipnot NUMARASINA değil METNİNE bağlıdır: araya yeni dipnot girse de doğru yerde kalır.
+  Dipnot metni değişirse (ör. düzelttiğinizde) yeni bir kayıt sayılır ve yeniden incelemeye düşer.
+- Çalışma durumu (işaretler, son baktığınız kayıt, PDF kaymaları, tema) tezin yanında
+  “<tez adı>.tezdenetci.json” dosyasında tutulur ve her değişiklikte kaydedilir.
+- Tez ve “Tüm Kaynaklar” bir bulut klasöründeyse (Google Drive, OneDrive…) bu dosya da eşitlenir:
+  evde programı açtığınızda kaldığınız kayıttan devam edersiniz, hiçbir şey yapmanız gerekmez.
+  İki bilgisayarda yapılan işaretler birleştirilir; biri ötekini ezmez.
+- Bulut kullanmıyorsanız: Dosya › Çalışma durumunu dışa aktar → dosyayı taşıyın →
+  öbür bilgisayarda Dosya › Çalışma durumunu içe aktar.
+- İlk kez açtığınız bilgisayarda yalnızca tez, liste ve klasörü bir kez seçmeniz yeterli.
+
+KISAYOLLAR
+F5 tara · Ctrl+F ara · Ctrl+G dipnota git · Ctrl+Shift+C doğrusunu kopyala
+Ctrl+Shift+W Word’de göster · Ctrl+D incelendi · F8 Bulgular · F9 Dipnot Atlası · Ctrl+T tema · F1 kılavuz
+
+Uygulama hiçbir dosyanızı değiştirmez ve internete bağlanmaz; yalnızca okur.
+(“Word’de göster” Word’de yalnızca imleci taşır; metne dokunmaz.)
+
+LİSANS
+Copyright (C) 2026 Berkay Çelik <berkcel@gmail.com>
+GNU Affero Genel Kamu Lisansı sürüm 3 veya sonrası (AGPL-3.0-or-later) ve NOTICE.txt'teki ek
+koşullarla dağıtılır. Programı başkasına verirken kaynak kodunu da verin (paketle.bat
+bunu kaynak_kod.zip olarak programın yanına koyar). Yazar atfı kaldırılamaz.
