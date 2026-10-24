@@ -1,0 +1,37 @@
+name: Derle
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Kütüphaneler
+        run: python -m pip install -r requirements.txt pyinstaller
+      - name: Inno Setup
+        shell: pwsh
+        run: if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) { choco install innosetup -y --no-progress }
+      - name: Paketle
+        run: python paketle.py
+      - name: Öz-sınama
+        shell: pwsh
+        run: |
+          Expand-Archive cikti\*_Tasinabilir.zip -DestinationPath sinama
+          $p = Start-Process sinama\TezDenetci\TezDenetci.exe -ArgumentList '--selftest' -PassThru
+          $p | Wait-Process -Timeout 120
+          Get-Content sinama\TezDenetci\selftest.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TezDenetci-Windows
+          path: cikti/*
+      - if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: cikti/*
