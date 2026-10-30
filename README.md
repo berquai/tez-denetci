@@ -9,6 +9,7 @@ Berkay Çelik tarafından akademik çalışmalara yardımcı olmak amacıyla tas
 - **Dipnot denetimi:** İlk atıfta tam künye, sonraki atıflarda kısa biçim sırasını; italikleri, büyük harf kurallarını, sayfa aralıklarını ve tırnak işaretlerini denetler.
 - **Birleştirme kuralı:** Aynı paragrafta art arda aynı kaynağa yapılan atıfların tek dipnotta birleştirilmesi gerektiğini bildirir.
 - **Sahte dipnot numarası avı:** Word dipnotuna bağlı olmayan üst simge rakamları ve metne yapışık numaraları yakalar.
+- **Çapraz atıf denetimi:** Metinde ve dipnotlarda başlık numarasına verilen atıfları ("bkz. 3.6.1", "3.6.1'de", "2. bölümde") bulur, hangi başlığa denk geldiğini gösterir; numara tezde yoksa ya da "yukarıda" denip başlık aşağıdaysa işaretler.
 - **Kaynak Kütüğü:** Excel'deki kaynak listesiyle tezdeki atıfları eşleştirir; kaynakçayı bu listeden yeniden üretir.
 - **Kaynak görüntüleyici:** Bir bulguya tıklayınca atıf yapılan kaynak (PDF, Word, Excel) doğru sayfada açılır. Basılı sayfa ile PDF sayfası arasındaki kaymayı kendisi hesaplar.
 - **Word bağlantısı:** Açık Word belgesinde ilgili dipnota gider ve kaçıncı sayfada olduğunu söyler.
@@ -36,7 +37,7 @@ Ayrıntılı kullanım için program içinde **F1** tuşuna basın ya da [BENIOK
 ## Paketleme
 
 - **Kendi bilgisayarınızda:** `paketle.bat` → `cikti` klasöründe taşınabilir zip, kurulum exe'si (Inno Setup 6 kuruluysa) ve kaynak kod arşivi.
-- **GitHub'da:** Actions › **Derle** › **Run workflow**. Çıktılar işin "Artifacts" bölümünden indirilir. `v1.3.0` gibi bir etiketle yeni bir sürüm (Release) oluşturulursa çıktılar o sürüme kendiliğinden eklenir.
+- **GitHub'da:** Actions › **Derle** › **Run workflow**. Çıktılar işin "Artifacts" bölümünden indirilir. `v1.4.0` gibi bir etiketle yeni bir sürüm (Release) oluşturulursa çıktılar o sürüme kendiliğinden eklenir.
 
 ## Gereksinimler
 

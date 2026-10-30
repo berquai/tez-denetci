@@ -4,7 +4,7 @@ import html
 from PySide6.QtCore import Qt, QPointF, QUrl, Signal
 from PySide6.QtGui import QDesktopServices, QPixmap
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QToolButton, QComboBox,
-                               QStackedWidget, QTextBrowser, QTableWidget, QTableWidgetItem, QScrollArea, QSizePolicy)
+                               QStackedWidget, QTextBrowser, QTableWidget, QTableWidgetItem, QScrollArea)
 from PySide6.QtPdf import QPdfDocument, QPdfSearchModel
 from PySide6.QtPdfWidgets import QPdfView
 from ..files_audit import first_page, guess_offset
@@ -141,7 +141,7 @@ class SourceViewer(QWidget):
                 self.pdf.load(path)
             self._path = path
             self.stack.setCurrentWidget(self.pdfview)
-            off = self.offsets.get(self._key(path))
+            off = self.offsets.get(self._key(path), self.offsets.get(os.path.basename(path).lower()))
             how = 'kayıtlı'
             if off is None:
                 texts = self._texts(path)
@@ -238,7 +238,13 @@ class SourceViewer(QWidget):
 
     @staticmethod
     def _key(path):
-        return os.path.basename(path).lower()
+        """Dosya adı + boyut: aynı adlı farklı PDF'ler ayrışır, bilgisayarlar arası eşitleme de bozulmaz.
+        (1.3 ve öncesi yalnızca dosya adını kullanıyordu; okurken o anahtara da bakılır.)"""
+        try:
+            size = os.path.getsize(path)
+        except OSError:
+            size = 0
+        return f'{os.path.basename(path).lower()}|{size}'
 
     def _zoom(self, f):
         self.pdfview.setZoomMode(QPdfView.ZoomMode.Custom)

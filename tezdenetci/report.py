@@ -1,6 +1,5 @@
 """HTML hata raporu: vurgulu metin, önerilen doğru biçim ve italikli kopyalama."""
 import html
-import json
 from collections import Counter, defaultdict
 from datetime import datetime
 from .rules import LEVELS, LEVEL_TR, _diff_html

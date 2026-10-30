@@ -4,6 +4,7 @@ Kimlikler dipnot NUMARASINA değil METNİNE bağlıdır; araya dipnot girse de i
 import hashlib
 import json
 import os
+import re
 import socket
 import time
 from ..common import norm
@@ -28,6 +29,12 @@ def item_key(A, it):
 
 
 def finding_key(ikey, f):
+    # mesajdaki sayılar (ör. 'ilk kez 12. dipnotta') araya dipnot girince değişir; kimliğe katılmaz
+    return ikey + '|' + _h(f.cat + '|' + re.sub(r'\d+', '#', f.msg))
+
+
+def legacy_finding_key(ikey, f):
+    """1.3 ve öncesinin kimliği (sayılar dahil); eski işaretleri taşımak için."""
     return ikey + '|' + _h(f.cat + '|' + f.msg)
 
 
@@ -92,6 +99,15 @@ class WorkState:
                 self.reviewed.pop(k, None)
                 self.removed[k] = now
         self.updated = now
+
+    def migrate(self, pairs):
+        """Eski kimlikle işaretlenmiş kayıtları yeni kimliğe taşır. pairs: [(eski, yeni)]"""
+        moved = False
+        for old, new in pairs:
+            if old != new and old in self.reviewed and new not in self.reviewed and new not in self.removed:
+                self.reviewed[new] = self.reviewed[old]
+                moved = True
+        return moved
 
     def touch(self):
         self.updated = time.time()

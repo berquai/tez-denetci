@@ -1,4 +1,4 @@
-TEZ DENETÇİ 1.3 — Kurulum ve kullanım
+TEZ DENETÇİ 1.4 — Kurulum ve kullanım
 =====================================
 Berkay Çelik tarafından akademik çalışmalara yardımcı olmak amacıyla tasarlanmıştır.
 
@@ -50,6 +50,11 @@ KULLANIM
   Kayma yanlışsa doğru sayfaya gelin, basılı numarayı “Basılı s.”ye yazıp
   “Kaymayı buradan hesapla”ya basın.
 - Görünüm › Tema (Ctrl+T): Kâğıt, Sepya, Bulut, Gece, Gece Mavisi, Orman, Yüksek Kontrast, Özel.
+- Çapraz atıf (1.4): metinde ve dipnotlarda başlık numarasına verilen atıfları (“bkz. 3.6.1”,
+  “3.6.1’de”, “3.6.1 numaralı başlık”, “2. bölümde”) bulur ve hangi başlığa denk geldiğini yazar.
+  Numara tezde yoksa ya da “yukarıda” denip başlık aşağıdaysa işaretler. Kategori listesinden
+  “Çapraz atıf” seçilerek hepsi görülür; Genel grubunda tümünün dökümü vardır. Düzeltmeyi elle yapın:
+  numara yerine başlık adını yazmak kalıcıdır.
 - Dosya > Dışa aktar: HTML rapor, Excel (Word'den üretilmiş dipnot listesi + Kaynak Kütüğü),
   Word (yeni kaynakça, tezin "a_kaynakça" biçemiyle).
 

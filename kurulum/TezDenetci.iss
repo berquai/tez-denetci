@@ -1,6 +1,6 @@
 ﻿; Tez Denetçi kurulum betiği (Inno Setup 6). Doğrudan değil, paketle.py üzerinden derleyin.
 #ifndef AppVer
-  #define AppVer "1.3.0"
+  #define AppVer "1.4.0"
 #endif
 #define AppName "Tez Denetçi"
 

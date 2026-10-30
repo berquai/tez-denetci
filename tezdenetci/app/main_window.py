@@ -2,18 +2,18 @@
 import json
 import os
 import traceback
-from PySide6.QtCore import Qt, QObject, QThread, Signal, QTimer, QSettings, QFileSystemWatcher, QMimeData, QUrl, QSize
-from PySide6.QtGui import QAction, QActionGroup, QKeySequence, QIcon, QPixmap, QColor, QPainter, QDesktopServices, QFont
+from PySide6.QtCore import Qt, QObject, QThread, Signal, QTimer, QFileSystemWatcher, QMimeData, QUrl, QSize
+from PySide6.QtGui import QAction, QActionGroup, QKeySequence, QIcon, QPixmap, QColor, QPainter, QDesktopServices
 from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTreeWidget, QTreeWidgetItem, QLineEdit,
                                QCheckBox, QComboBox, QTextBrowser, QPushButton, QDockWidget, QFileDialog, QLabel,
                                QMessageBox, QApplication, QToolBar, QStyle, QSizePolicy, QMenu, QInputDialog,
                                QHeaderView, QDialog, QFormLayout, QDialogButtonBox, QColorDialog, QAbstractItemView)
 from .. import __version__, APP_NAME, AUTHOR
 from . import model as mdl
-from .themes import THEMES, CUSTOM, DEFAULT_THEME, palette_for, colors_for, EDITABLE_ROLES, is_dark
+from .themes import THEMES, CUSTOM, DEFAULT_THEME, palette_for, colors_for, EDITABLE_ROLES
 from .about import AboutDialog, LicenseDialog, res
 from . import wordlink
-from .state import WorkState, item_key, finding_key, state_path_for
+from .state import WorkState, item_key, finding_key, legacy_finding_key, state_path_for
 from ..engine import run_audit, finding_keys
 from .model import build_items, detail
 from .viewer import SourceViewer
@@ -370,6 +370,7 @@ class MainWindow(QMainWindow):
         if p:
             self.docx = p
             self.settings.setValue('docx', p)
+            self.prev_keys = None      # başka tezle karşılaştırma yapılmasın
             self.wstate = WorkState()
             self.load_state()
             self._update_paths()
@@ -380,6 +381,7 @@ class MainWindow(QMainWindow):
         if p:
             self.xlsx = p
             self.settings.setValue('xlsx', p)
+            self.prev_keys = None
             guess = os.path.join(os.path.dirname(p), 'Tüm Kaynaklar')
             if not self.folder and os.path.isdir(guess):
                 self.folder = guess
@@ -444,9 +446,13 @@ class MainWindow(QMainWindow):
         if self.state_path:
             self.wstate.load(self.state_path)      # başka bilgisayarda yapılan işaretler
             self.viewer.offsets.update(self.wstate.offsets)
+        legacy = []
         for it in self.items:
             it.key = item_key(A, it)
             it.fkeys = [finding_key(it.key, f) for f in it.findings] or [it.key]
+            legacy += [(legacy_finding_key(it.key, f), finding_key(it.key, f)) for f in it.findings]
+        if self.wstate.migrate(legacy):
+            self._state_timer.start(1500)
         cats = sorted({c for it in self.items for c in it.cats})
         cur = self.cat.currentText()
         self.cat.blockSignals(True)
@@ -795,6 +801,13 @@ class MainWindow(QMainWindow):
             return False
         return True
 
+    def _export_failed(self, p, e):
+        if isinstance(e, PermissionError):
+            why = 'Dosya başka bir programda (Word / Excel / tarayıcı) açık olabilir; kapatıp yeniden deneyin.'
+        else:
+            why = traceback.format_exc()[-1500:]
+        QMessageBox.warning(self, 'Dışa aktarılamadı', f'{p}\n\nkaydedilemedi. {why}')
+
     def export_html(self):
         if not self._need():
             return
@@ -802,7 +815,11 @@ class MainWindow(QMainWindow):
         if p:
             from ..report import build_report
             meta = f'{os.path.basename(self.docx)} · {os.path.basename(self.xlsx)}'
-            build_report(self.A, p, meta, self.A.styles)
+            try:
+                build_report(self.A, p, meta, self.A.styles)
+            except Exception as e:
+                self._export_failed(p, e)
+                return
             QDesktopServices.openUrl(QUrl.fromLocalFile(p))
 
     def export_xlsx(self):
@@ -811,7 +828,11 @@ class MainWindow(QMainWindow):
         p, _ = QFileSystemDialog(self, 'Excel', 'Kaynak_Kutugu.xlsx', 'Excel (*.xlsx)')
         if p:
             from ..export import export_xlsx
-            export_xlsx(self.A, p)
+            try:
+                export_xlsx(self.A, p)
+            except Exception as e:
+                self._export_failed(p, e)
+                return
             self.status.showMessage(f'Kaydedildi: {p}', 8000)
 
     def export_bib(self):
@@ -820,7 +841,11 @@ class MainWindow(QMainWindow):
         p, _ = QFileSystemDialog(self, 'Kaynakça', 'Kaynakca.docx', 'Word (*.docx)')
         if p:
             from ..kaynakca import export_docx
-            export_docx(self.A.bibliography, self.docx, p)
+            try:
+                export_docx(self.A.bibliography, self.docx, p)
+            except Exception as e:
+                self._export_failed(p, e)
+                return
             self.status.showMessage(f'Kaydedildi: {p}', 8000)
 
     # ------------------------------------------------------------------ çalışma durumu

@@ -196,12 +196,17 @@ def read_docx(path):
         if st.startswith('aSbebalk1') and not in_bib:
             in_body = True
         if in_bib and st != 'akaynaka' and (is_head or st.startswith(('asbezel', 'fbezel'))
-                                             or plain.upper() in ('ÖZGEÇMİŞ', 'EKLER', 'CV')):
+                                             or plain.replace('i', 'İ').upper() in ('ÖZGEÇMİŞ', 'EKLER', 'CV')):
             in_bib = False
+            # bu paragraftaki dipnotlar da sayılır; yoksa sonraki numaralar kayar
+            for pos_, n, wid in fnpos:
+                footnotes.append(Footnote(n, wid, fn_rt.get(wid, RText())))
             continue
         if st == 'akaynaka' or (in_bib and plain and not is_head):
             if plain:
                 bib.append(Para(len(bib) + 1, st, rt.strip()))
+            for pos_, n, wid in fnpos:
+                footnotes.append(Footnote(n, wid, fn_rt.get(wid, RText())))
             continue
         if is_head and plain:
             cur_head = plain
@@ -269,5 +274,6 @@ def read_styles(path):
                 c[ps.get(W + 'val')] += 1
         fn_style = c.most_common(1)[0][0] if c else None
     if not fn_style:
-        fn_style = next((k for k, s in styles.items() if s.find(W + 'name').get(W + 'val') == 'footnote text'), None)
+        fn_style = next((k for k, s in styles.items()
+                         if s.find(W + 'name') is not None and s.find(W + 'name').get(W + 'val') == 'footnote text'), None)
     return {'dipnot': resolve(fn_style), 'kaynakca': resolve('akaynaka'), 'govde': resolve('aSbemetinTezi')}

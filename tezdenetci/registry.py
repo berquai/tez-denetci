@@ -3,7 +3,7 @@ import re
 from dataclasses import dataclass, field
 import openpyxl
 from openpyxl.cell.rich_text import CellRichText, TextBlock
-from .common import RText, nfc, norm, tr_lower
+from .common import RText, nfc, norm
 
 # ---------------------------------------------------------------- Excel okuma
 

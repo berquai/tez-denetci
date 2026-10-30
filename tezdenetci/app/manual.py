@@ -1,6 +1,5 @@
 """Kullanım kılavuzu: program içinde F1 ile açılır; ayrıca bağımsız HTML dosyası olarak dışa yazılabilir."""
-from PySide6.QtCore import Qt, QUrl
-from PySide6.QtWidgets import QDialog, QHBoxLayout, QListWidget, QTextBrowser, QSplitter, QVBoxLayout, QLineEdit
+from PySide6.QtWidgets import QDialog, QListWidget, QTextBrowser, QSplitter, QVBoxLayout, QLineEdit
 from .. import __version__, APP_NAME, AUTHOR
 
 SECTIONS = []   # (kimlik, başlık, html)
@@ -133,7 +132,21 @@ Gerçek dipnotlar kelimeden, virgülden ya da noktadan sonra gelebilir; bunları
 <p>Aynı dipnotta aynı kaynağın iki kez geçmesi (sayfalar birleştirilebilir) ve birden çok kaynağın virgülle ayrılması
 (noktalı virgül önerisi).</p>
 <h4>Kütük farkı (Bilgi)</h4>
-<p>Word’deki dipnot metni Excel’deki kayıttan farklıysa, farkı harf harf gösterir.</p>''')
+<p>Word’deki dipnot metni Excel’deki kayıttan farklıysa, farkı harf harf gösterir.</p>
+<h4>Çapraz atıf (başlık numarasına atıf)</h4>
+<p>Metinde ve dipnotlarda başlık numarasıyla verilen atıfları bulur: “bkz. 3.6.1”, “bkz. yukarıda 2.1 ve 2.3”, “3.6.1’de”,
+“3.6.1 numaralı başlıkta”, “2. bölümde”, “Bölüm 3”. Başlık eklenip çıkarıldıkça numaralar değiştiği için bu atıflar boşa
+düşebilir. Her atıf için o numaranın tezde hangi başlığa denk geldiği yazılır; doğru yeri gösterip göstermediğine siz karar
+verirsiniz.</p>
+<ul><li>Numaralar başlıkların içinde yazılıysa (“3.6.1. Başlık”) program onları kullanır. Word’ün otomatik numaralandırması
+kullanılıyorsa numaralar başlık düzeylerinden (Başlık 1 / 2 / 3) hesaplanır ve <b>tahmini</b> diye belirtilir. “BİRİNCİ BÖLÜM”
+gibi bölüm satırları tanınır; GİRİŞ, SONUÇ, KAYNAKÇA gibi numarasız başlıklar sayılmaz.</li>
+<li><b>Hata:</b> numara tezde yoksa (numaralar başlıkta yazılıysa) ya da “yukarıda 3.6.1” denip başlık aşağıdaysa (veya tersi).
+<b>Uyarı:</b> öteki bütün atıflar, kontrol için.</li>
+<li>Hepsini görmek için kategori listesinden <i>Çapraz atıf</i>’ı seçin; <b>Genel</b> grubunda bütün atıfların hangi başlığa denk
+geldiğiyle birlikte dökümü vardır. <b>Word’de göster</b> ilgili paragrafa ya da dipnota gider.</li>
+<li>Program metni değiştirmez. Kalıcı çözüm, numara yerine başlık adını yazmak ya da Word’ün Başvurular › Çapraz Başvuru
+özelliğini kullanmaktır (o zaman numaralar kendiliğinden güncellenir).</li></ul>''')
 
 S('kaynakca', '6a. Kaynakça ve Excel denetimleri', '''
 <h4>Kaynakça grubu</h4>

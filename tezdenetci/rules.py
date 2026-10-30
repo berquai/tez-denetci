@@ -4,9 +4,8 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from rapidfuzz import fuzz, process
 from rapidfuzz.distance import Levenshtein
-from .common import RText, norm, norm_map, tr_lower, tr_upper_char, tr_sort_key, parse_pages, nfc
-from .registry import (split_locator, expected_mask, _punct_rules, _journal_span, _title_end, top_split,
-                       classify, GAZETTES)
+from .common import RText, norm, norm_map, tr_lower, tr_upper_char, tr_sort_key, parse_pages
+from .registry import split_locator, expected_mask, _punct_rules, _title_end, classify, GAZETTES
 from .matcher import Matcher, align_alnum
 
 LEVELS = {'hata': 0, 'uyari': 1, 'oneri': 2, 'bilgi': 3}
@@ -52,20 +51,30 @@ def apply_ops(rt, ops):
         if op.kind == 'ital':
             for k in range(op.a, min(op.b, len(out.ital))):
                 out.ital[k] = op.val
+    # çakışan değişikliklerde geniş olan kazanır (ör. bütün atfın tam/kısa künyeyle değişmesi,
+    # aynı atıf içindeki büyük harf düzeltmesinden önce gelir)
+    chosen = []
+    for op in sorted([o for o in ops if o.kind == 'repl'], key=lambda o: -(o.b - o.a)):
+        if all(not _overlaps(op, c) for c in chosen):
+            chosen.append(op)
     # metin değişiklikleri sağdan sola
-    repl = sorted([o for o in ops if o.kind == 'repl'], key=lambda o: (o.a, o.b), reverse=True)
-    last_a = None
-    for op in repl:
-        if last_a is not None and op.b > last_a:
-            continue  # çakışan değişikliği atla
+    for op in sorted(chosen, key=lambda o: (o.a, o.b), reverse=True):
         new = op.val
         if new.ital and len(new.ital) == len(new.text) and op.b - op.a == len(new.text) and all(not x for x in new.ital):
             # yalnızca harf değişikliği: mevcut italikleri koru
             new = RText(new.text, out.ital[op.a:op.b])
         out = out.replace(op.a, op.b, new)
-        last_a = op.a
     from .common import curly
     return curly(_tidy_spaces(out))
+
+
+def _overlaps(x, y):
+    """İki değişiklik aynı karakterlere dokunuyor mu? Kenardaki ekleme (a == b) çakışma sayılmaz."""
+    if x.a == x.b:
+        return y.a < x.a < y.b
+    if y.a == y.b:
+        return x.a < y.a < x.b
+    return x.a < y.b and y.a < x.b
 
 
 def _tidy_spaces(rt):
@@ -305,7 +314,8 @@ def text_findings(rt, where, ref, majority):
     for m in re.finditer(r'(\d)\.,\s', t):
         fnd.append(Finding('hata', 'Noktalama', where, ref, 'Sayfa numarasından sonra “.,” — fazladan nokta',
                            [(m.start() + 1, m.end() - 1)]))
-        ops.append(FixOp('repl', m.start() + 1, m.end() - 1, RText.plain(';' if majority.get('multi_sep') == ';' else ',')))
+        # yalnızca fazla nokta silinir; kaynaklar arası ayraç önerisini (;) 'Çoklu atıf' kuralı verir
+        ops.append(FixOp('repl', m.start() + 1, m.end() - 1, RText.plain(',')))
     for m in re.finditer(r'(\d{1,2}\.\d{1,2}\.\d{4}|\d{4})\.(https?://)', t):
         fnd.append(Finding('hata', 'Noktalama', where, ref, 'Tarih ile bağlantı arasında boşluk yok',
                            [(m.end(1), m.end(1) + 1)]))
@@ -454,7 +464,6 @@ def detect_majority(doc, rows):
             ref['before'] += 1
     maj['ref_pos'] = ref.most_common(1)[0][0] if ref else 'after'
     maj['ref_counts'] = dict(ref)
-    maj['multi_sep'] = ';'
     return maj
 
 
@@ -504,7 +513,7 @@ class Auditor:
                         new_m = s.tam_mask
                         newrt = RText(new.text, [bool(x) for x in (new_m or [False] * len(new.text))])
                         self.add([Finding('hata', 'İlk kullanım', 'dipnot', num,
-                                          f'Bu kaynak tezde ilk kez burada geçiyor ama KISA dipnot yazılmış. Tam dipnot olmalı.',
+                                          'Bu kaynak tezde ilk kez burada geçiyor ama KISA dipnot yazılmış. Tam dipnot olmalı.',
                                           [(c.start, c.end)])],
                                  [FixOp('repl', c.start, c.end, newrt)], self.fn_ops, num)
                 else:
@@ -586,7 +595,7 @@ class Auditor:
                     k0 = c.loc_start + c.loc.index('–')
                     self.add([Finding('uyari', 'Biçim tutarlılığı', 'dipnot', f.num, 'Sayfa aralığında uzun tire (–); tezde kısa tire (-) kullanılıyor',
                                       [(k0, k0 + 1)])], [FixOp('repl', k0, k0 + 1, RText.plain('-'))], self.fn_ops, f.num)
-                if not c.loc and s.tip in ('makale', 'kitap') and c.form == 'tam' and s.title_short is not None:
+                if not c.loc and s.tip in ('makale', 'kitap') and c.form == 'tam':
                     if not re.search(r'\bs\.\s*\d', t[c.end:cits[i + 1].start if i + 1 < len(cits) else len(t)]):
                         self.add([Finding('bilgi', 'Sayfa', 'dipnot', f.num, 'Atıfta sayfa numarası yok', [(c.start, c.end)])])
                 # cilt = yıl
@@ -662,7 +671,6 @@ class Auditor:
     def audit_body(self):
         doc = self.doc
         # dipnot referans konumu
-        pos = self.maj['ref_pos']
         for f in doc.footnotes:
             if f.para < 0:
                 continue
@@ -757,6 +765,34 @@ class Auditor:
                                      [FixOp('ital', j, j + 1, True) for j in range(a0, b0) if p.rt.text[j].isalnum() or p.rt.text[j] in ' :-'],
                                      self.body_ops, p_i)
                     k = nt.find(key, k + 1)
+
+    # --------------------------------------------------- başlık numarasına atıflar (bkz. 3.6.1)
+    def audit_crossrefs(self):
+        from .crossref import heading_map, crossref_findings
+        doc = self.doc
+        self.heading_map = hmap = heading_map(doc)
+        rows = []
+        for p_i, p in enumerate(doc.body):
+            if p.style.startswith(('aSbebalk', 'Heading', 'Balk')):
+                continue
+            for fnd, c, h, ctx in crossref_findings(p.rt.text, 'govde', p_i, hmap, p.idx, body=True):
+                self.add([fnd])
+                rows.append((f'Paragraf {p_i + 1}', fnd, c, h, ctx))
+        for f in doc.footnotes:
+            here = doc.body[f.para].idx if f.para >= 0 else None
+            for fnd, c, h, ctx in crossref_findings(f.rt.text, 'dipnot', f.num, hmap, here, body=False):
+                self.add([fnd])
+                rows.append((f'Dipnot {f.num}', fnd, c, h, ctx))
+        self.crossrefs = rows
+        if rows:
+            n_bad = sum(1 for r in rows if r[3] is None or r[1].level == 'hata')
+            lines = [f'{_esc(w)}: …{_esc(ctx)}… → ' + (_esc(h.title.strip()[:70]) if h else '<b>başlık bulunamadı</b>')
+                     for w, fnd, c, h, ctx in rows]
+            self.add([Finding('uyari', 'Çapraz atıf', 'genel', None,
+                              f'Tezde başlık numarasına verilmiş {len(rows)} atıf var (bkz. 3.6.1 gibi)' +
+                              (f'; {n_bad} tanesi bulunamayan ya da ters yönlü başlığa işaret ediyor' if n_bad else '') +
+                              '. Numaralar ekleme/çıkarmada değişir; başlık adıyla atıf daha güvenlidir.',
+                              detail='<br>'.join(lines[:400]))])
 
     # --------------------------------------------------- kaynakça
     def audit_bib(self):
@@ -887,8 +923,6 @@ class Auditor:
         if not m:
             return None
         a = m.end()
-        nxt = re.search(r',\s', t[a:])
-        b0 = a + (nxt.start() if nxt else len(t) - a)
         b = _title_end(t, a, a)
         if b <= a:
             return None
@@ -1030,6 +1064,7 @@ class Auditor:
         from .kaynakca import build_bibliography, word_only_entries
         self.audit_footnotes()
         self.audit_body()
+        self.audit_crossrefs()
         self.audit_excel()
         # Word'deki kaynakça eski: kaynakça kütükten yeniden üretilir
         self.bibliography = build_bibliography(self)

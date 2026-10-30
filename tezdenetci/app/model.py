@@ -161,7 +161,8 @@ def detail(A, item):
         if fn.para >= 0:
             p = A.doc.body[fn.para]
             t = p.rt.text
-            a = max(0, t.rfind('. ', 0, max(0, fn.pos - 260)) + 2 if fn.pos > 260 else 0)
+            k = t.rfind('. ', 0, fn.pos - 260) if fn.pos > 260 else -1
+            a = k + 2 if k >= 0 else 0
             b = t.find('. ', fn.pos + 1)
             b = len(t) if b < 0 else min(len(t), b + 1)
             ctx = E(t[a:fn.pos]) + f'<span class="ref"><sup>▲{fn.num}</sup></span>' + E(t[fn.pos:b])

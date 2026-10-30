@@ -1,10 +1,9 @@
 """Hakkında ve Lisans pencereleri."""
-import os
 import platform
 from pathlib import Path
-from PySide6.QtCore import Qt, QUrl
-from PySide6.QtGui import QPixmap, QDesktopServices
-from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTabWidget, QTextBrowser,
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTabWidget,
                                QPlainTextEdit, QDialogButtonBox)
 import PySide6
 from .. import __version__, APP_NAME, AUTHOR, EMAIL, YEARS, SOURCE_URL

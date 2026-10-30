@@ -3,7 +3,7 @@ import re
 from dataclasses import dataclass
 from difflib import SequenceMatcher
 from rapidfuzz import fuzz
-from .common import norm_map, norm
+from .common import norm_map
 
 
 @dataclass
@@ -64,9 +64,7 @@ class Matcher:
             for key, form, s in self.index:
                 if len(key) < 15:
                     continue
-                if abs(len(key) - len(seg)) > len(seg) + 40 and len(key) > len(seg):
-                    pass
-                r = fuzz.partial_ratio_alignment(key, seg, score_cutoff=86)
+                r =fuzz.partial_ratio_alignment(key, seg, score_cutoff=86)
                 if r is None:
                     continue
                 cov = (r.dest_end - r.dest_start)

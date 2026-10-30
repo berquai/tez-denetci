@@ -2,8 +2,8 @@
 import re
 from dataclasses import dataclass, field
 from rapidfuzz import fuzz
-from .common import RText, norm, tr_sort_key, nfc
-from .registry import expected_mask, top_split, GAZETTES
+from .common import RText, norm, tr_sort_key
+from .registry import expected_mask, GAZETTES
 from .rules import caps_issues, title_regions, _q
 
 VERIFIED_UNTIL = 500   # kullanıcı: Excel'in ilk 500 satırı gözle kontrol edildi
@@ -50,8 +50,6 @@ def normalize_text(rt, changes):
     if re.search(r"(?<=\w)'(?=\w)", t.text):
         t = RText(re.sub(r"(?<=\w)'(?=\w)", '’', t.text), t.ital)
         changes.append("Düz kesme (') → ’")
-    for m in re.finditer(r'([,.;])”', t.text):
-        pass
     if re.search(r'[,;]”', t.text):
         t = RText(re.sub(r'([,;])”', r'”\1', t.text), t.ital)
         changes.append('Tırnak içindeki virgül tırnak dışına alındı')
@@ -200,9 +198,7 @@ def word_only_entries(A, entries):
 
 def export_docx(entries, template_path, out_path, style_id='akaynaka', heading='KAYNAKLAR'):
     """Kaynakçayı tezin kendi biçemiyle (şablon .docx'teki 'akaynaka' stili) Word dosyası olarak yazar."""
-    import copy
     from docx import Document
-    from docx.shared import Pt
     doc = Document(template_path)
     body = doc.element.body
     for el in list(body):
@@ -219,7 +215,10 @@ def export_docx(entries, template_path, out_path, style_id='akaynaka', heading='
         if getattr(st, 'style_id', None) in ('asbezelSayfalarOrtal', 'Heading1'):
             head_style = st
             break
-    h = doc.add_paragraph(heading, style=head_style) if head_style is not None else doc.add_paragraph(heading)
+    if head_style is not None:
+        doc.add_paragraph(heading, style=head_style)
+    else:
+        doc.add_paragraph(heading)
     for e in entries:
         p = doc.add_paragraph(style=style) if style is not None else doc.add_paragraph()
         for seg, it in e.new.segments():
@@ -235,7 +234,7 @@ def export_docx(entries, template_path, out_path, style_id='akaynaka', heading='
 
 def _strip_footnotes(path):
     """Şablondan gelen tez dipnotlarını pakettan temizler (yalnızca ayırıcılar kalır)."""
-    import zipfile, shutil, tempfile, os
+    import zipfile, shutil, tempfile
     from lxml import etree
     W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
     tmp = tempfile.mktemp(suffix='.docx')
